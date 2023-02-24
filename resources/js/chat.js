@@ -28,6 +28,32 @@ window.onload = function () {
                     appendMessages(r.data.messages);
                 })
         })
+        .then(() => {
+            Echo.join(`chats.${chatId}`)
+                .listen('MessageSent', (e) => {
+                    appendMessage(
+                        e.message.user.name,
+                        PERSON_IMG,
+                        'left',
+                        e.message.content,
+                        formatDate(new Date(e.message.created_at))
+                    );
+                })
+                .here(users => {
+                    let result = users.filter(user => user.id != authUser.id)
+
+                    if (result)
+                        chatStatus.classList = 'chatStatus online';
+                })
+                .joining(user => {
+                    if (user.id != authUser.id)
+                        chatStatus.classList = 'chatStatus online';
+                })
+                .leaving(user => {
+                    if (user.id != authUser.id)
+                        chatStatus.classList = 'chatStatus offline';
+                })
+        })
 }
 
 msgerForm.addEventListener("submit", event => {
@@ -53,18 +79,6 @@ msgerForm.addEventListener("submit", event => {
 
     msgerInput.value = "";
 });
-
-// Echo
-Echo.join(`chats.${chatId}`)
-    .listen('MessageSent', (e) => {
-        appendMessage(
-            e.message.user.name,
-            PERSON_IMG,
-            'left',
-            e.message.content,
-            formatDate(new Date(e.message.created_at))
-        );
-    });
 
 // Utils
 function get(selector, root = document) {
