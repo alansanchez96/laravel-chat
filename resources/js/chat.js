@@ -7,6 +7,7 @@ const typing = get(".typing");
 const chatStatus = get(".chatStatus");
 const chatId = get("#hiddenInput").value;
 let authUser;
+let typingTimer = false;
 
 window.onload = function () {
     axios.get('/auth/user')
@@ -52,6 +53,19 @@ window.onload = function () {
                 .leaving(user => {
                     if (user.id != authUser.id)
                         chatStatus.classList = 'chatStatus offline';
+                })
+                .listenForWhisper('typing', e => {
+                    if (e > 0)
+                        typing.style.display = '';
+
+                    if (typingTimer) {
+                        clearTimeout(typingTimer)
+                    }
+
+                    typingTimer = setTimeout(() => {
+                        typing.style.display = 'none';
+                        typingTimer = false;
+                    }, 3000);
                 })
         })
 }
@@ -135,3 +149,13 @@ function formatDate(date) {
 function scrollToBotton() {
     msgerChat.scrollTop = msgerChat.scrollHeight;
 }
+
+function sendTypingEvent() {
+    typingTimer = true;
+    Echo.join(`chats.${chatId}`)
+        .whisper('typing', msgerInput.value.length);
+}
+
+msgerInput.addEventListener('input', () => {
+    sendTypingEvent();
+})

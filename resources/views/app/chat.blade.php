@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Laravel Chat</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/chat.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root {
             --body-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -210,7 +210,7 @@
         <div class="msger-chat"></div>
 
         <form class="msger-inputarea">
-            <input type="text" oninput="" placeholder="Enter your message..." class="msger-input">
+            <input type="text" placeholder="Enter your message..." class="msger-input">
             <input type="hidden" name="chatId" value="{{ $chat->id }}" id="hiddenInput">
             <button type="submit" class="msger-send-btn">Send</button>
         </form>
